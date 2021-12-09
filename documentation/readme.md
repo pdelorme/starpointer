@@ -2,9 +2,9 @@ Documentation
 ===
 
 StarPointer est concu pour etre calibré manuellement quelque soit son orientation.
-Le seul prérequis est d'ajoir l'etoile polaire en visuel.
+Le seul prérequis est d'avoir l'etoile polaire en visuel.
 
-1. Connexion
+Connexion
 ---
 Lors de sa premiere mise sous tension le startPointer creera un Acces Point WIFI
 - SSID : STAR_POINTER
@@ -13,7 +13,7 @@ Lors de sa premiere mise sous tension le startPointer creera un Acces Point WIFI
 
 Connectez vous-y avec votre navigateur PC ou mobile : http://192.168.4.1/
 
-2. Configuration
+Configuration
 ---
 StarTracker à besoin de connaitre votre position géographique et l'heure pour tous ses calculs astronomiques.
 
@@ -22,9 +22,9 @@ Vous pouvez constater l'heure prise en compte sur l'interface.
 
 Vous devrez configurer votre position géographique manuellement avec le dropdown de positions connues.
 
-![Configure](IHM Configure.png)
+![Configure](IHM_Configure.png)
 
-3. Calibration
+Calibration
 ---
 Une fois l'apareil configuré, vous devez le calibrer pour qu'il sache ou est le nord celeste.
 
@@ -37,15 +37,15 @@ Le startracker est maintenant calibré.
 
 Vous pouvez vérifier son bon fonctionnement grace aux boutons North, south, east, west, horizon et azimuth qui déplacerons le laser vers la dircetion choisie.
 
-![Calibrate](IHM Calibrate.png)
+![Calibrate](IHM_Calibrate.png)
 
-4. Tracking
+Tracking
 ---
 L'onglet goto sert à controler le startPointer une fois bien configuré.
 
 Choisisez une target et laissez le starPointer aller à la cible puis la suivre.
 
-![Go To](IHM Goto.png)
+![Go To](IHM_Goto.png)
 
 Note
 ---
