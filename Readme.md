@@ -14,5 +14,5 @@ Ces caractéristiques sont les suivantes :
 - persistence de la configuration en EEPROM.
 - entierement autonome (avec l'aide d'un powerpack 5V)
 
-![Star pointer](starpointer1.jpg)
+![Star pointer](documentation/starpointer1.jpg)
 
