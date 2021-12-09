@@ -5,7 +5,7 @@ Le StarPointer est un pointeur laser robotisé qui permet de pointer dynamiqueme
 
 Ces caractéristiques sont les suivantes :
 - entierement imprimé en 3D
-- controlé par un STM8266 ou STM32
+- controlé par un ESP8266 ou ESP32
 - motorisé par 2 Stepper 28byj-48
 - WIFI Access Point ou Client
 - interface WEB compatible mobile.
