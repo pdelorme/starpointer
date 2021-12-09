@@ -1,0 +1,148 @@
+<!DOCTYPE HTML><html>
+<head>
+  <title>Star Pointer Server</title>
+  <link href="style.css" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+</head>
+<body>
+  <script type="text/javascript">
+  	var mySocket = new WebSocket("ws://" + window.location.host +"/ws");
+    mySocket.onopen = function (event) {
+      const date = new Date();
+	  mySocket.send("TIME:"+date.toISOString());
+	};
+
+    mySocket.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+	  document.getElementById("time").textContent = data.time;
+	  document.getElementById("target_name").textContent = data.target.name;
+	  document.getElementById("target_ra").textContent = data.target.ra;
+	  document.getElementById("target_dec").textContent = data.target.dec;
+	  document.getElementById("target_alt").textContent = data.target.alt;
+	  document.getElementById("target_azi").textContent = data.target.azi;
+	  document.getElementById("stepper_azi").textContent = data.steppers.azi;
+	  document.getElementById("stepper_alt").textContent = data.steppers.alt;
+    document.getElementById("position_name").textContent = data.position.name;
+	  document.getElementById("position_lat").textContent = data.position.lat;
+	  document.getElementById("position_lon").textContent = data.position.lon;
+	  console.log(data);
+	};
+
+	var interval;
+    function move(direction) {
+      clearInterval(interval); 
+      interval = setInterval(function(){
+        mySocket.send("MOVE:"+direction);
+      }, 5);
+    };
+
+    function stop(){
+      clearInterval(interval);
+    };
+
+    function goto(target) {
+      mySocket.send("GOTO:"+target);
+    };
+
+    function setPosition() {
+      mySocket.send("SETP:POLARIS");
+    };
+
+	function setPosition(position) {
+	  var infopos = "";
+	  if(position instanceof String){
+	  	if(position == "AUTO"){
+ 		  localPosition();
+	  	} else {
+	  	  infopos+=position;
+	  	}
+	  } else if (position instanceof GeoLocationPosition) {
+	  	infopos += "LAT="+position.coords.latitude +",";
+	  	infopos += "LON="+position.coords.longitude;
+	  } else {
+	  	return;
+	  }
+	  mySocket.send("GPS_:"+infopos);
+	};
+
+	function localPosition() {
+		if(navigator.geolocation) {
+  			navigator.geolocation.getCurrentPosition(setPosition);
+		}
+	};
+
+  function setLocation(code) {
+    mySocket.send("LOC_:"+code);
+  };
+	localPosition();
+  </script>
+  <h2>Star Pointer Server</h2>
+  <p>Welcome</p>
+  <H2>Infos : </H2>
+  <p><label>time : </label><span id="time"></span></p>
+  <p><label>target : </label><span id="target_name"></span></p>
+  <p><label>EQ coordinate : </label>RA=<span id="target_ra"></span>, DEC=<span id="target_dec"></span></p>
+  <p><label>H coordinate : </label>ALT=<span id="target_alt"></span>, AZI=<span id="target_azi"></span></p>
+  <p><label>Steppers : </label>ALT=<span id="stepper_alt"></span>, AZI=<span id="stepper_azi"></span></p>
+  <p><label>Position : </label>Name=<span id="position_name"></span>, </label>LAT=<span id="position_lat"></span>, LON=<span id="position_lon"></span></p>
+  <H2>Stellar Objects</H2>
+  <ul>
+  	<li><div class="myButton" onclick="goto('POLARIS');">Goto Polaris</div></li>
+  </ul>
+  <p>Move pointer to adjust Polaris position</p>
+  <ul>
+	  <li><div class="myButton" onmousedown="move('UP');" onmouseup="stop()">Up</div></li>
+	  <li><div class="myButton" onmousedown="move('DOWN');" onmouseup="stop()">Down</div></li>
+	  <li><div class="myButton" onmousedown="move('LEFT');" onmouseup="stop()">Left/West</div></li>
+	  <li><div class="myButton" onmousedown="move('RIGHT');" onmouseup="stop()">Right/East</div></li>
+  </ul>
+  <div class="myButton" onclick="setPosition();">Set Polaris Position</div>
+  <ul>
+	  <li><div class="myButton" onclick="goto('NORTH');">North</div></li>
+	  <li><div class="myButton" onclick="goto('SOUTH');">South</div></li>
+	  <li><div class="myButton" onclick="goto('EAST');">East</div></li>
+	  <li><div class="myButton" onclick="goto('WEST');">West</div></li>
+	  <li><div class="myButton" onclick="goto('ZENITH');">Zenith</div></li>
+	  <li><div class="myButton" onclick="goto('HORIZON');">Horizon</div></li>
+  </ul>
+  <H2>Solar System Objects</H2>
+  <ul>
+  	<li><div class="myButton" onclick="goto('S1');">Moon</div></li>
+  	<li><div class="myButton" onclick="goto('S2');">Sun</div></li>
+    <li><div class="myButton" onclick="goto('S3');">Mercury</div></li>
+    <li><div class="myButton" onclick="goto('S4');">Venus</div></li>
+    <li><div class="myButton" onclick="goto('S5');">Mars</div></li>
+    <li><div class="myButton" onclick="goto('S6');">Jupiter</div></li>
+    <li><div class="myButton" onclick="goto('S7');">Saturn</div></li>
+    <li><div class="myButton" onclick="goto('S8');">Uranus</div></li>
+    <li><div class="myButton" onclick="goto('S9');">Neptune</div></li>
+  </ul>
+  <select name="planets" id="solar-system-objects" onchange="goto(this.value)">
+    <option value="S0">--None--</option>
+	<option value="S1">Moon</option>
+	<option value="S2">Sun</option>
+	<option value="S3">Mercury</option>
+	<option value="S4">Venus</option>
+	<option value="S5">Mars</option>
+	<option value="S6">Jupiter</option>
+	<option value="S7">Saturn</option>
+	<option value="S8">Uranus</option>
+	<option value="S9">Neptune</option>
+  </select>
+  <select name="planets" id="messier-objects" onchange="goto(this.value)">
+  	<option value="M0">--None--</option>
+    <option value="M45">M45 Pleiades</option>
+  	<option value="M24">M24 Small Sagittarius Star Cloud</option>
+  	<option value="M7">M7 Ptolemy Cluster</option>
+  	<option value="M31">M31 Andromeda Galaxy</option>
+  	<option value="M44">M44 Beehive Cluster or Praesepe</option>
+  	<option value="M42">M42 Orion Nebula</option>
+  	<option value="M6">M6 Butterfly Cluster</option>
+  </select>
+  <select name="location" id="location" onchange="setLocation(this.value)">
+   	<option value="AUTO">-- Auto --</option>
+   	<option value="MARS">Marseille</option>
+  </select>
+  <span class="myButton" onclick="goto('ISS');">ISS</span>
+</body>
+</html>
