@@ -1,55 +1,54 @@
 Documentation
 ===
 
-StarPointer est concu pour etre calibré manuellement quelque soit son orientation.
-Le seul prérequis est d'avoir l'etoile polaire en visuel.
+Starpointer is designed to be calibrated manually whatever his position and location is.
+The only requierment is to be able to see polaris from the device.
 
 Connexion
 ---
-Lors de sa premiere mise sous tension le startPointer creera un Acces Point WIFI
+StarPointer will create the flowing WIFI access point at first boot or when the local AP cannot be fount.
 - SSID : STAR_POINTER
-- MdP  : 0123456789
+- MdP  : 1234567890
 - IP   : 192.168.4.1
 
-Connectez vous-y avec votre navigateur PC ou mobile : http://192.168.4.1/
+Connect to StarPointer by going to http://192.168.4.1/ with your favorite browser on PC or mobile.
 
 Configuration
 ---
-StarTracker à besoin de connaitre votre position géographique et l'heure pour tous ses calculs astronomiques.
+StarPonter need to know where and when it is in order to do its astonomic calculations.
 
-Dés votre connexion, le StarPointer recuperera l'heure de votre PC ou mobile pour se configurer.
-Vous pouvez constater l'heure prise en compte sur l'interface.
-
-Vous devrez configurer votre position géographique manuellement avec le dropdown de positions connues.
+On connection, StarTracker will get time and location from your browser.
+You can check that time is correct in the interface.
+If geo-coordinate is not found, you can set it manually from the location drowpdown or by inputing your coordinates.
 
 ![Configure](IHM_Configure.png)
 
 Calibration
 ---
-Une fois l'apareil configuré, vous devez le calibrer pour qu'il sache ou est le nord celeste.
+Once configured, you must caibrate your device so it knows where celestial north is.
 
-Sur l'onglet calibration
-  1. appuyez sur "Goto Polaris". Le startracker se déplacera vers ce qui est polaris pour lui. initialement cette position est aléatoire.
-  2. orientez le startracker pour que le pointeur laser pointe aproximativement dans la direction du nord.
-  3. à l'aide des touches UP, DOWN, LEFT, RIGH, déplacez le pointeur pour qu'il pointe le plus pécisément possible sur l'étoile polaire.
-  4. une fois l'alignement satisfaisant, appuyez sur "set polaris position"
-Le startracker est maintenant calibré.
+1. Go to "Calibration"
+2. push "Goto Polaris". StarPointer will move to where it thinks polaris is (which is random at first)
+3. move the device to point more or less north.
+4. using the UP, DOWN, LEFT, RIGH buttons, move the poiter so it aligns perfectly with polaris.
+5. push "set polaris position" when you are done.
 
-Vous pouvez vérifier son bon fonctionnement grace aux boutons North, south, east, west, horizon et azimuth qui déplacerons le laser vers la dircetion choisie.
+StarPointer is now calibrated. 
+
+You can use the North, south, east, west, horizon and azimuth buttons to check the StarPointer is behaving as exppected.
 
 ![Calibrate](IHM_Calibrate.png)
 
 Tracking
 ---
-L'onglet goto sert à controler le startPointer une fois bien configuré.
+This tab is for pointing the device at some space objects.
 
-Choisisez une target et laissez le starPointer aller à la cible puis la suivre.
+Pick the object you want to point to and StarPointer will move to it.
+Once aligned with the target StarPointer will stay in synch and will update it pointing every seconds.
 
 ![Go To](IHM_Goto.png)
 
 Note
 ---
-- Starpointer est contraint au dessus de l'horizon (une fois calibré). si votre cible est en dessous de l'horizon. il la suivra mais sans aller en dessous de l'horizon.
-
-- Le calcul de la trajectoire de l'ISS dépend de données online qui doivent etre rafraichie régulierement pour etre valide. Pour se faire vous devrez connecter votre starpointer à internet avant une session d'observation.
-
+- Starpointer is constrained above horizon (once calibrated). If your target is below the horizon, it will track it while staying stuck at the horizon level.
+- ISS trajectory needs some fresh online update to be accurate. Therefore StarPointer has to be connected to local Wifi network in order to refresh its reference data. It'll try to do so each time you connect to a local network.
