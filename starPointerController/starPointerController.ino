@@ -2,6 +2,8 @@
   Patrice Delorme
   Controle le star pointer depuis le WIFI.
 *********/
+#define TEST 0 // set to 1 for unit testing.
+#define DEBUG 1 // set to 1 for debug logging.
 
 // Import required libraries
 #include <ESP8266WiFi.h>
@@ -15,7 +17,9 @@
 #include "FS.h"
 #include <Sgp4.h>
 #include <EEPROM.h>
-
+#if TEST == 1
+#include <ArduinoUnit.h>
+#endif
 
 AccelStepper aziStepper(AccelStepper::HALF4WIRE, D0, D2, D1, D3);
 AccelStepper altStepper(AccelStepper::HALF4WIRE, D5, D7, D6, D8);
@@ -36,9 +40,11 @@ HorizontalCoordinates targetHCoord;
 String targetName = "Aucune";
 unsigned long updateMillis = 0;
 
+#if TEST == 0
 void setup(){
   // Serial port for debugging purposes
   Serial.begin(115200);
+  setupEEPROM();
   setupWifi();
   //setupSatTrack();
   setupWebserver();
@@ -50,3 +56,13 @@ void loop() {
   loopStarpointer();
   // loopSatTrack();
 }
+#else
+void setup(){
+  Serial.begin(115200);
+  setupEEPROM();
+}
+
+void loop(){
+  Test::run();
+}
+#endif
