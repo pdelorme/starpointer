@@ -9,3 +9,7 @@ ul {
 li {
     display: inline;
 }
+
+.inline {
+	display:flex;
+}

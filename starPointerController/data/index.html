@@ -12,227 +12,265 @@
   <link href="style.css" rel="stylesheet">
   <link href="tabs.css" rel="stylesheet">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <script type="text/javascript">
+	function init() {
+		document.getElementById("defaultOpen").click();
+	}
+  </script>
 </head>
 <body onload="init()">
 <div class="container">
 	<div class="row">
-	<div class="one-half column">
 		<h1>Star Pointer Server</h1>
 	</div>
-</div>
-<div class="row">
-	<div class="one-half column">
-  		<label>Position :</label> <span id="position_name">xx</span>; [lat:<span id="position_lat">xx</span>, lon:<span id="position_lon">]</span>
-  	</div>
-  	<div class="one-half column">
-  	    <label>Time : </label><span id="time">tt</span>
-    </div>
-</div>
-<div class="row">
-	<div class="one-half column">
-  	<label>Target : </label><span id="target_name"></span>
-  </div>
-  <div class="one-half column">
-    <label>EQ coordinate : </label>RA=<span id="target_ra"></span>, DEC=<span id="target_dec"></span>
+	<div class="row">
+		<div class="one-half column inline">
+	  		<label>Position :</label> <span id="position_name">xx</span>; [lat:<span id="position_lat">xx</span>, lon:<span id="position_lon">]</span>
+	  	</div>
+	  	<div class="one-half column inline">
+	  	    <label>Time : </label><span id="time">tt</span>
+	    </div>
+	</div>
+	<div class="row">
+		<div class="one-half column inline">
+	  	<label>Target : </label><span id="target_name"></span>
+	  </div>
+	  <div class="one-half column inline">
+	    <label>EQ coordinate : </label>RA=<span id="target_ra"></span>, DEC=<span id="target_dec"></span>
+	  </div>
+	</div>
+	<div class="row">
+	  <div class="one-half column inline">
+	  	<label>H coordinate : </label>ALT=<span id="target_alt"></span>, AZI=<span id="target_azi"></span>
+	  </div>
+	  <div class="one-half column inline">
+	  	<label>Steppers : </label>ALT=<span id="stepper_alt"></span>, AZI=<span id="stepper_azi"></span>
+	  </div>
+	</div>
+	<div class="row"> 
+		<!-- Tab links -->
+		<div class="tab">
+		  <button class="button tablinks" onclick="openTab(event, 'Configure')" id="defaultOpen">Configure</button>
+		  <button class="button tablinks" onclick="openTab(event, 'Calibrate')">Calibrate</button>
+		  <button class="button tablinks" onclick="openTab(event, 'Goto')">Go To</button>
+		</div>
+	</div>
+	<!-- Tab content -->
+	<div id="Configure" class="row tabcontent">
+		<h3>Location</h3>
+		<p>Select your location on Earth</p>
+		<select name="location" id="location" onchange="setLocation(this.value)">
+			<option value="AUTO">-- Auto --</option>
+			<option value="MARS">Marseille</option>
+			<option value="LYON">Lyon</option>
+			<option value="GRE">Grenoble</option>
+			<option value="PARIS">Paris</option>
+			<option value="BORD">Bordeau</option>
+			<option value="BREST">Brest</option>
+			<option value="STRAS">Strasbourg</option>
+  		</select>
+	  	<div class="row">
+			<div class="one-half column inline">
+	  			<label for="userLAT">Latitude:</label>
+	  			<input type="text" id="userLAT" name="userLAT" required minlength="0" maxlength="64" size="20">
+	  		</div>
+			<div class="one-half column inline ">
+				<label for="userLON">Longitude:</label>
+				<input type="text" id="userLON" name="userLON" required minlength="0" maxlength="64" size="20">
+			</div>
+	 	</div>
+	  	<button class="button-primary" onclick="setLatLon();">WIP : Set Gps coordinates</button>
+	  	<br/><br/>
+		<h3>Wifi</h3>
+		<p>Configure local wifi</p>
+		<div class="row">
+			<div class="one-half column inline">
+				<label for="wifiSSID" class="label-body">Access Point:</label>
+				<input type="text" id="wifiSSID" name="wifiSSID" required minlength="3" maxlength="32" size="10">
+			</div>
+			<div class="one-half column inline">
+				<label for="wifiPWD">Password:</label>
+				<input type="text" id="wifiPWD" name="wifiPWD" required minlength="0" maxlength="64" size="20">
+			</div>
+		</div>
+		<button class="button-primary" onclick="setWIFI();">WIP : Set Access Point</button>
+	</div>
+
+	<!-- Tab content -->
+	<div id="Calibrate" class="row tabcontent">
+	<!--   <h2>Calibrate</h2> -->
+	  <h3>Polaris</h3>
+	  <p>Goto to Polaris, adjust position and hit "Set Polaris"</p>
+	  <ul>
+	  	<li><button class="button-primary" onclick="goto('POLARIS');">Goto Polaris</button></li>
+	  	<li></li>
+		<li><button class="button" ontouchstart="move('UP')" ontouchend="stop()" onmousedown="move('UP')" onmouseup="stop()">Up</button></li>
+		<li><button class="button" ontouchstart="move('DOWN')" ontouchend="stop()"  onmousedown="move('DOWN')" onmouseup="stop()">Down</button></li>
+		<li><button class="button" ontouchstart="move('LEFT')" ontouchend="stop()"  onmousedown="move('LEFT')" onmouseup="stop()">Left/West</button></li>
+		<li><button class="button" ontouchstart="move('RIGHT')" ontouchend="stop()"  onmousedown="move('RIGHT')" onmouseup="stop()">Right/East</button></li>
+	  	<li></li>
+	  	<li><button class="button-primary" onclick="setPosition();">Set Polaris Position</button></li>
+	  </ul>
+	  <h3>Navigate</h3>
+	  <p>Check Pointer is properly calibrated by playing arround</p>
+	  <ul>
+		  <li><button class="button"  onclick="goto('NORTH');">North</button></li>
+		  <li><button class="button"  onclick="goto('SOUTH');">South</button></li>
+		  <li><button class="button"  onclick="goto('EAST');">East</button></li>
+		  <li><button class="button"  onclick="goto('WEST');">West</button></li>
+		  <li><button class="button"  onclick="goto('ZENITH');">Zenith</button></li>
+		  <li><button class="button"  onclick="goto('HORIZON');">Horizon</button></li>
+	  </ul>
+	</div>
+
+	<!-- Tab content -->
+	<div id="Goto" class="row tabcontent">
+	  <!-- <h2>Goto target</h2> -->
+	  <p>Pick the target tou want to go to</p>
+	  <H3>Solar System Objects</H3>
+	  <ul>
+	  	<li><button class="button" onclick="goto('S1');">Moon</button></li>
+	  	<li><button class="button" onclick="goto('S2');">Sun</button></li>
+	    <li><button class="button" onclick="goto('S3');">Mercury</button></li>
+	    <li><button class="button" onclick="goto('S4');">Venus</button></li>
+	    <li><button class="button" onclick="goto('S5');">Mars</button></li>
+	    <li><button class="button" onclick="goto('S6');">Jupiter</button></li>
+	    <li><button class="button" onclick="goto('S7');">Saturn</button></li>
+	    <li><button class="button" onclick="goto('S8');">Uranus</button></li>
+	    <li><button class="button" onclick="goto('S9');">Neptune</button></li>
+	  </ul>
+	<!--   <select name="planets" id="solar-system-objects" onchange="goto(this.value)">
+	    <option value="S0">--None--</option>
+		<option value="S1">Moon</option>
+		<option value="S2">Sun</option>
+		<option value="S3">Mercury</option>
+		<option value="S4">Venus</option>
+		<option value="S5">Mars</option>
+		<option value="S6">Jupiter</option>
+		<option value="S7">Saturn</option>
+		<option value="S8">Uranus</option>
+		<option value="S9">Neptune</option>
+	  </select> -->
+	  <H3>Messier Catalog</H3>
+	  <p>The 10 messier catalog brigtest object</p>
+	  <select name="messier" id="messier-objects" onchange="goto(this.value)">
+	  	<option value="M0">--None--</option>
+	    <option value="M45">M45 Pleiades</option>
+	  	<option value="M24">M24 Small Sagittarius Star Cloud</option>
+	  	<option value="M7">M7 Ptolemy Cluster</option>
+	  	<option value="M31">M31 Andromeda Galaxy</option>
+	  	<option value="M44">M44 Beehive Cluster or Praesepe</option>
+	  	<option value="M42">M42 Orion Nebula</option>
+	  	<option value="M6">M6 Butterfly Cluster</option>
+	  </select>
+	  <H3>Satelites</H3>
+	  <p>Track satelites</p>
+	  <button class="button" onclick="goto('ISS');">ISS</button>
 	</div>
 </div>
-<div class="row">
-  <div class="one-half column">
-  	<label>H coordinate : </label>ALT=<span id="target_alt"></span>, AZI=<span id="target_azi"></span>
-  </div>
-  <div class="one-half column">
-  	<label>Steppers : </label>ALT=<span id="stepper_alt"></span>, AZI=<span id="stepper_azi"></span>
-  </div>
-</div>
-<div class="row"> 
-<!-- Tab links -->
-<div class="tab">
-  <button class="button tablinks" onclick="openTab(event, 'Configure')" id="defaultOpen">Configure</button>
-  <button class="button tablinks" onclick="openTab(event, 'Calibrate')">Calibrate</button>
-  <button class="button tablinks" onclick="openTab(event, 'Goto')">Go To</button>
-</div>
-</div>
-<!-- Tab content -->
-<div id="Configure" class="row tabcontent">
-<!--   <h2>Configure</h2> -->
-  <p>Here you can configure your location and wifi network</p>
-  <h3>Location</h3>
-  <p>tell where you are</p>
-  <select name="location" id="location" onchange="setLocation(this.value)">
-   	<option value="AUTO">-- Auto --</option>
-   	<option value="MARS">Marseille</option>
-  </select>
-  <h3>Wifi</h3>
-  <p>configure local wifi</p>
-</div>
+<script type="text/javascript">
+  	var mySocket = new WebSocket("ws://" + window.location.host +"/ws");
+    mySocket.onopen = function (event) {
+      const date = new Date();
+	  mySocket.send("TIME:"+date.toISOString());
+	};
 
-<!-- Tab content -->
-<div id="Calibrate" class="row tabcontent">
-<!--   <h2>Calibrate</h2> -->
-  <h3>Polaris</h3>
-  <p>Goto to Polaris, adjust position and hit "Set Polaris"</p>
-  <ul>
-  	<li><button class="button-primary" onclick="goto('POLARIS');">Goto Polaris</button></li>
-  	<li></li>
-	<li><button class="button" onmousedown="move('UP');" onmouseup="stop()">Up</button></li>
-	<li><button class="button" onmousedown="move('DOWN');" onmouseup="stop()">Down</button></li>
-	<li><button class="button" onmousedown="move('LEFT');" onmouseup="stop()">Left/West</button></li>
-	<li><button class="button" onmousedown="move('RIGHT');" onmouseup="stop()">Right/East</button></li>
-  	<li></li>
-  	<li><button class="button-primary" onclick="setPosition();">Set Polaris Position</button></li>
-  </ul>
-  <h3>Navigate</h3>
-  <p>Check Pointer is properly calibrated by playing arround</p>
-  <ul>
-	  <li><button class="button"  onclick="goto('NORTH');">North</button></li>
-	  <li><button class="button"  onclick="goto('SOUTH');">South</button></li>
-	  <li><button class="button"  onclick="goto('EAST');">East</button></li>
-	  <li><button class="button"  onclick="goto('WEST');">West</button></li>
-	  <li><button class="button"  onclick="goto('ZENITH');">Zenith</button></li>
-	  <li><button class="button"  onclick="goto('HORIZON');">Horizon</button></li>
-  </ul>
-</div>
+    mySocket.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+	  document.getElementById("time").textContent = data.time;
+	  document.getElementById("target_name").textContent = data.target.name;
+	  document.getElementById("target_ra").textContent = data.target.ra;
+	  document.getElementById("target_dec").textContent = data.target.dec;
+	  document.getElementById("target_alt").textContent = data.target.alt;
+	  document.getElementById("target_azi").textContent = data.target.azi;
+	  document.getElementById("stepper_azi").textContent = data.steppers.azi;
+	  document.getElementById("stepper_alt").textContent = data.steppers.alt;
+    document.getElementById("position_name").textContent = data.position.name;
+	  document.getElementById("position_lat").textContent = data.position.lat;
+	  document.getElementById("position_lon").textContent = data.position.lon;
+	  console.log(data);
+	};
 
-<!-- Tab content -->
-<div id="Goto" class="row tabcontent">
-  <!-- <h2>Goto target</h2> -->
-  <p>Pick the target tou want to go to</p>
-  <H3>Solar System Objects</H3>
-  <ul>
-  	<li><button class="button" onclick="goto('S1');">Moon</button></li>
-  	<li><button class="button" onclick="goto('S2');">Sun</button></li>
-    <li><button class="button" onclick="goto('S3');">Mercury</button></li>
-    <li><button class="button" onclick="goto('S4');">Venus</button></li>
-    <li><button class="button" onclick="goto('S5');">Mars</button></li>
-    <li><button class="button" onclick="goto('S6');">Jupiter</button></li>
-    <li><button class="button" onclick="goto('S7');">Saturn</button></li>
-    <li><button class="button" onclick="goto('S8');">Uranus</button></li>
-    <li><button class="button" onclick="goto('S9');">Neptune</button></li>
-  </ul>
-<!--   <select name="planets" id="solar-system-objects" onchange="goto(this.value)">
-    <option value="S0">--None--</option>
-	<option value="S1">Moon</option>
-	<option value="S2">Sun</option>
-	<option value="S3">Mercury</option>
-	<option value="S4">Venus</option>
-	<option value="S5">Mars</option>
-	<option value="S6">Jupiter</option>
-	<option value="S7">Saturn</option>
-	<option value="S8">Uranus</option>
-	<option value="S9">Neptune</option>
-  </select> -->
-  <H3>Messier Catalog</H3>
-  <p>The 10 messier catalog brigtest object</p>
-  <select name="messier" id="messier-objects" onchange="goto(this.value)">
-  	<option value="M0">--None--</option>
-    <option value="M45">M45 Pleiades</option>
-  	<option value="M24">M24 Small Sagittarius Star Cloud</option>
-  	<option value="M7">M7 Ptolemy Cluster</option>
-  	<option value="M31">M31 Andromeda Galaxy</option>
-  	<option value="M44">M44 Beehive Cluster or Praesepe</option>
-  	<option value="M42">M42 Orion Nebula</option>
-  	<option value="M6">M6 Butterfly Cluster</option>
-  </select>
-  <H3>Satelites</H3>
-  <p>Track satelites</p>
-  <button class="button" onclick="goto('ISS');">ISS</button>
-</div>
-</div>
-	<script type="text/javascript">
-	  	var mySocket = new WebSocket("ws://" + window.location.host +"/ws");
-	    mySocket.onopen = function (event) {
-	      const date = new Date();
-		  mySocket.send("TIME:"+date.toISOString());
-		};
+	var interval;
+    function move(direction) {
+      clearInterval(interval); 
+      interval = setInterval(function(){
+        mySocket.send("MOVE:"+direction);
+      }, 5);
+    };
 
-	    mySocket.onmessage = function (event) {
-	      const data = JSON.parse(event.data);
-		  document.getElementById("time").textContent = data.time;
-		  document.getElementById("target_name").textContent = data.target.name;
-		  document.getElementById("target_ra").textContent = data.target.ra;
-		  document.getElementById("target_dec").textContent = data.target.dec;
-		  document.getElementById("target_alt").textContent = data.target.alt;
-		  document.getElementById("target_azi").textContent = data.target.azi;
-		  document.getElementById("stepper_azi").textContent = data.steppers.azi;
-		  document.getElementById("stepper_alt").textContent = data.steppers.alt;
-	    document.getElementById("position_name").textContent = data.position.name;
-		  document.getElementById("position_lat").textContent = data.position.lat;
-		  document.getElementById("position_lon").textContent = data.position.lon;
-		  console.log(data);
-		};
+    function stop(){
+      clearInterval(interval);
+    };
 
-		var interval;
-	    function move(direction) {
-	      clearInterval(interval); 
-	      interval = setInterval(function(){
-	        mySocket.send("MOVE:"+direction);
-	      }, 5);
-	    };
+    function goto(target) {
+      mySocket.send("GOTO:"+target);
+    };
 
-	    function stop(){
-	      clearInterval(interval);
-	    };
+    function setPosition() {
+      mySocket.send("SETP:POLARIS");
+    };
 
-	    function goto(target) {
-	      mySocket.send("GOTO:"+target);
-	    };
+	function setPosition(position) {
+	  var infopos = "";
+	  if(position instanceof String){
+	  	if(position == "AUTO"){
+ 		  localPosition();
+	  	} else {
+	  	  infopos+=position;
+	  	}
+	  } else if (position instanceof GeolocationPosition) {
+	  	infopos += "LAT="+position.coords.latitude +",";
+	  	infopos += "LON="+position.coords.longitude;
+	  } else {
+	  	return;
+	  }
+	  mySocket.send("GPS_:"+infopos);
+	};
 
-	    function setPosition() {
-	      mySocket.send("SETP:POLARIS");
-	    };
-
-		function setPosition(position) {
-		  var infopos = "";
-		  if(position instanceof String){
-		  	if(position == "AUTO"){
-	 		  localPosition();
-		  	} else {
-		  	  infopos+=position;
-		  	}
-		  } else if (position instanceof GeolocationPosition) {
-		  	infopos += "LAT="+position.coords.latitude +",";
-		  	infopos += "LON="+position.coords.longitude;
-		  } else {
-		  	return;
-		  }
-		  mySocket.send("GPS_:"+infopos);
-		};
-
-		function localPosition() {
-			if(navigator.geolocation) {
-	  			navigator.geolocation.getCurrentPosition(setPosition);
-			}
-		};
-
-		function setLocation(code) {
-		    mySocket.send("LOC_:"+code);
-		};
-		
-		localPosition();
-
-		function openTab(evt, tabName) {
-  			// Declare all variables
-  			var i, tabcontent, tablinks;
-
-  			// Get all elements with class="tabcontent" and hide them
-  			tabcontent = document.getElementsByClassName("tabcontent");
-		  	for (i = 0; i < tabcontent.length; i++) {
-		    	tabcontent[i].style.display = "none";
-		  	}
-
-		  	// Get all elements with class="tablinks" and remove the class "active"
-		  	tablinks = document.getElementsByClassName("tablinks");
-		 	for (i = 0; i < tablinks.length; i++) {
-		    	tablinks[i].className = tablinks[i].className.replace(" active", "");
-		  	}
-
-		  	// Show the current tab, and add an "active" class to the button that opened the tab
-		  	document.getElementById(tabName).style.display = "block";
-		  	evt.currentTarget.className += " active";
+	function localPosition() {
+		if(navigator.geolocation) {
+  			navigator.geolocation.getCurrentPosition(setPosition);
 		}
-		function init() {
-			document.getElementById("defaultOpen").click();
-		}
-	</script>
+	};
+
+	function setLocation(code) {
+	    mySocket.send("LOC_:"+code);
+	};
+	
+	localPosition();
+
+	function setLatLon(){
+		var lat = document.getElementById("userLAT").value;
+		var lon = document.getElementById("userLAT").value;
+		var infopos = "LAT="+lat +",LON="+lon;
+		mySocket.send("GPS_:"+infopos);
+	}
+	function setWIFI(){
+		var wifiString = "SSID="+document.getElementById("wifiSSID").value+" PWD="+document.getElementById("wifiPWD").value;
+		mySocket.send("WIFI:"+wifiString);
+	}
+
+	function openTab(evt, tabName) {
+			// Declare all variables
+			var i, tabcontent, tablinks;
+
+			// Get all elements with class="tabcontent" and hide them
+			tabcontent = document.getElementsByClassName("tabcontent");
+	  	for (i = 0; i < tabcontent.length; i++) {
+	    	tabcontent[i].style.display = "none";
+	  	}
+
+	  	// Get all elements with class="tablinks" and remove the class "active"
+	  	tablinks = document.getElementsByClassName("tablinks");
+	 	for (i = 0; i < tablinks.length; i++) {
+	    	tablinks[i].className = tablinks[i].className.replace(" active", "");
+	  	}
+
+	  	// Show the current tab, and add an "active" class to the button that opened the tab
+	  	document.getElementById(tabName).style.display = "block";
+	  	evt.currentTarget.className += " active";
+	}
+</script>
 </body>
 </html>
