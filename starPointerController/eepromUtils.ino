@@ -7,7 +7,8 @@
  * 236-239 [4] : Lat
  * 240-243 [4] : Lon
  * 244-259 [16] : last known IP.
- * 260-263 [4] : INIT
+ * 260-269 [10] : LOC
+ * 270-271 [1]  : WIFI // is wifi set ?
  */
 int EEPROM_SSID_OFFSET = 0;
 int EEPROM_PWD_OFFSET  = 32;
@@ -16,7 +17,8 @@ int EEPROM_TLE2_OFFSET = 166;
 int EEPROM_LAT_OFFSET  = 236;
 int EEPROM_LON_OFFSET  = 240;
 int EEPROM_IP_OFFSET   = 244;
-int EEPROM_INIT_OFFSET   = 260;
+int EEPROM_LOC_OFFSET   = 260;
+int EEPROM_WIFI_OFFSET  = 270;
 
 void setupEEPROM(){
   EEPROM.begin(512);
@@ -85,10 +87,15 @@ void readCharArrayFromEEPROM(int addrOffset, char data[], int strLen){
   }
 }
 
-boolean isEEPROMInit(){
-  Serial.println("reading init from EEPROM");
-  String s = readStringFromEEPROM(EEPROM_INIT_OFFSET);
-  return s == "INIT";
+/**
+ * Boolean
+ */
+void writeBooleanToEEPROM(int addrOffset, boolean value){
+  EEPROM.write(addrOffset, value?'Y':'N');
+}
+
+boolean readBooleanFromEEPROM(int addrOffset){
+  return EEPROM.read(addrOffset) == 'Y';
 }
 
 /**
@@ -116,5 +123,14 @@ test(ReadWriteCharArrayToEEPROM){
   char result[6];
   readCharArrayFromEEPROM(0, result, 6);
   assertEqual(testValue, result);
+}
+
+test(ReadWriteBooleanToEEPROM){
+  writeBooleanToEEPROM(0, true);
+  boolean result = readBooleanFromEEPROM(0);
+  assertTrue(result);
+  writeBooleanToEEPROM(0, false);
+  result = readBooleanFromEEPROM(0);
+  assertFalse(result);
 }
 #endif
