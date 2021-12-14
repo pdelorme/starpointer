@@ -3,8 +3,6 @@ Sgp4 sat;
 char satname[] = "ISS (ZARYA)";
 char tle_line1[] = "1 25544U 98067A 21324.06457731 .00001146 00000+0 29342-4 0 9990";  //Line one from the TLE data
 char tle_line2[] = "2 25544 51.6442 291.9657 0004633 219.6337 260.2444 15.48598792 312758";  //Line two from the TLE data
-int tle_line1_index = 0;
-int tle_line2_index = 70;
 
 int sign(double value){
   if(value<0) return -1;
@@ -61,12 +59,12 @@ void setupSatTrack(){
   if(fetchLTE()){
     // persist to eeprom
     Serial.println("Saving tle to EEPROM");
-    writeStringToEEPROM(tle_line1_index, tle_line1);
-    writeStringToEEPROM(tle_line2_index, tle_line2);
-  } else {
+        writeStringToEEPROM(EEPROM_TLE1_OFFSET, tle_line1); 
+        writeStringToEEPROM(EEPROM_TLE2_OFFSET, tle_line2); 
+    } else {
     // load from eeprom
-    readCharArrayFromEEPROM(tle_line1_index, tle_line1, 70);
-    readCharArrayFromEEPROM(tle_line2_index, tle_line2, 70);
+    readCharArrayFromEEPROM(EEPROM_TLE1_OFFSET, tle_line1, 70);
+    readCharArrayFromEEPROM(EEPROM_TLE2_OFFSET, tle_line2, 70);
     Serial.println("Reading tle from EEPROM");
     Serial.println(String(tle_line1));
   }
