@@ -21,8 +21,9 @@
 #include <ArduinoUnit.h>
 #endif
 
-AccelStepper aziStepper(AccelStepper::HALF4WIRE, D0, D2, D1, D3);
+AccelStepper aziStepper(AccelStepper::HALF4WIRE, D1, D3, D2, D4);
 AccelStepper altStepper(AccelStepper::HALF4WIRE, D5, D7, D6, D8);
+#define LASER_PIN D0
 
 enum TargetType {
   NoTarget = 0,
