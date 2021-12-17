@@ -8,23 +8,25 @@ struct Location {
   float alt;
 };
 
-const int locationsLength = 1;
+const int locationsLength = 7;
 Location locations[] = {
-  { "MARS", "Marseille",   {5.369780,  43.296482},  0 }, // Marseille coordinates from latlon.net : LatLon = 43.296482, 5.369780 ; GPS =  43° 17' 47.3352'' N, 5° 22' 11.208'' E
-  { "LYON", "Lyon",        {4.8320114, 45.7578137}, 0 }, 
-  { "GRE", "Grenoble",     {5.7357819, 45.1875602}, 0 },
-  { "PARIS", "Paris",      {2.320041,  48.8588897}, 0 },
-  { "BORD", "Bordeaux",    {-0.5800364,44.841225},  0 },
-  { "BREST", "Brest",      {-4.4860088,48.3905283}, 0 },
-  { "STRAS", "Strasbourg", {7.7507127, 48.584614},  0 }
+  { "MARS",  "Marseille",   {5.369780,  43.296482},  0 }, // Marseille coordinates from latlon.net : LatLon = 43.296482, 5.369780 ; GPS =  43° 17' 47.3352'' N, 5° 22' 11.208'' E
+  { "LYON",  "Lyon",        {4.8320114, 45.7578137}, 0 }, 
+  { "GRE",   "Grenoble",    {5.7357819, 45.1875602}, 0 },
+  { "PARIS", "Paris",       {2.320041,  48.8588897}, 0 },
+  { "BORD",  "Bordeaux",    {-0.5800364,44.841225},  0 },
+  { "BREST", "Brest",       {-4.4860088,48.3905283}, 0 },
+  { "STRAS", "Strasbourg",  {7.7507127, 48.584614},  0 }
 };
 
 struct Location getLocation(String code){
+  debugln("getLocation("+code+")");
   for(int i=0;i<locationsLength;i++){
-    if(locations[i].code == code){
-      return locations[i];
+    Location loc = locations[i];
+    if(code == loc.code){
+      return loc;
     }
-  }  
+  }
 }
 
 Location locationOnEarth;
@@ -97,3 +99,18 @@ struct SolarSystemRef getSolarObject(String code){
     }
   }
 }
+
+/**
+ * Unit Testing.
+ */
+#if TEST == 1
+
+test(getLocation){
+  Location loc = getLocation("BORD");
+  assertEqual("BORD", loc.code);
+  assertEqual("Bordeaux", loc.name);
+  loc = getLocation("BREST");
+  assertEqual("BREST", loc.code);
+}
+
+#endif
