@@ -5,7 +5,8 @@ const char* PARAM_COMMAND = "command";
 
 void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
              void *arg, uint8_t *data, size_t len) {
-  String cmd, val;
+  String cmd, val, dataString;
+  int index;
   switch (type) {
     case WS_EVT_CONNECT:
       Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str());
@@ -15,23 +16,38 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
       break;
     case WS_EVT_DATA:
       data[len] = 0;
-      Serial.printf("got some data");
-      Serial.printf((char*)data);
+      dataString = String((char*)data);
+      Serial.print("got some data : ");
+      Serial.print(dataString);
       Serial.println();
-      cmd = String((char*)data).substring(0,4);
-      val = String((char*)data).substring(5);
+      index = dataString.indexOf(":");
+      cmd = dataString.substring(0,index);
+      val = dataString.substring(index+1);
       Serial.println(cmd);
       Serial.println(val);
       if(cmd == "TIME"){
         int yr, mnth, d, h, m, s;
         sscanf( (char*)data, "TIME:%4d-%2d-%2dT%2d:%2d:%2dZ", &yr, &mnth, &d, &h, &m, &s);
         setTime(h,m,s,d,mnth,yr);
-      } else if(cmd == "GPS_"){
-        float lat, lon;
-        sscanf( (char*)data, "LAT=%f,LON=%f", &lat, &lon);
-        setLocationOnEarth(lat, lon);
-      } else if(cmd == "LOC_"){
-        setLocationOnEarth(getLocation(val));
+      } else if(cmd == "GPS"){
+        String lat = cmdArgValue(val, "LAT");
+        String lon  = cmdArgValue(val, "LON");
+        setPositionOnEarth(lat.toFloat(), lon.toFloat(), true);
+      } else if(cmd == "LOCATION"){
+        Location loc = getLocation(val);
+        setLocationOnEarth(loc, true);
+      } else if(cmd == "WIFI"){
+        String ssid = cmdArgValue(val, "SSID");
+        String pwd  = cmdArgValue(val, "PWD");
+        connectToLocalWifiString(ssid, pwd);
+      } else if(cmd == "AP"){
+        wifiAccessPoint(); 
+      } else if(cmd == "LASER"){
+        if(val == "ON"){
+          laserOn(true);
+        } else {
+          laserOn(false);
+        }
       } else if(cmd == "SETP"){
         setLaserPositionFromPolaris();
       } else if(cmd == "MOVE"){
@@ -79,6 +95,7 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
   }
 }
 void setupWebserver(){
+  Serial.println("Setting up WebServer");
   // Launch SPIFFS file system | Démarre le système de fichier SPIFFS 
   if(!SPIFFS.begin()){ 
     Serial.println("An Error has occurred while mounting SPIFFS");  
@@ -152,7 +169,7 @@ void setupWebserver(){
   // init ws
   ws.onEvent(onEvent);
   server.addHandler(&ws);
-  
+  Serial.println("starting WebServer");
   // Start server
   server.begin();
 }

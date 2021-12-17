@@ -25,7 +25,7 @@
 	</div>
 	<div class="row">
 		<div class="one-half column inline">
-	  		<label>Position :</label> <span id="position_name">xx</span>; [lat:<span id="position_lat">xx</span>, lon:<span id="position_lon">]</span>
+	  		<label>Position : </label> <span id="position_name">xx</span> [lat:<span id="position_lat">xx</span>, lon:<span id="position_lon"></span>]
 	  	</div>
 	  	<div class="one-half column inline">
 	  	    <label>Time : </label><span id="time">tt</span>
@@ -45,6 +45,14 @@
 	  </div>
 	  <div class="one-half column inline">
 	  	<label>Steppers : </label>ALT=<span id="stepper_alt"></span>, AZI=<span id="stepper_azi"></span>
+	  </div>
+	</div>
+	<div class="row">
+	  <div class="one-half column inline">
+	  	<button class="button-primary" onclick="laser('ON');">Turn ON</button>
+	  </div>
+	  <div class="one-half column inline">
+	  	<button class="button-primary" onclick="laser('OFF');">Turn FF</button>
 	  </div>
 	</div>
 	<div class="row"> 
@@ -109,7 +117,7 @@
 		<li><button class="button" ontouchstart="move('LEFT')" ontouchend="stop()"  onmousedown="move('LEFT')" onmouseup="stop()">Left/West</button></li>
 		<li><button class="button" ontouchstart="move('RIGHT')" ontouchend="stop()"  onmousedown="move('RIGHT')" onmouseup="stop()">Right/East</button></li>
 	  	<li></li>
-	  	<li><button class="button-primary" onclick="setPosition();">Set Polaris Position</button></li>
+	  	<li><button class="button-primary" onclick="setPolaris();">Set Polaris Position</button></li>
 	  </ul>
 	  <h3>Navigate</h3>
 	  <p>Check Pointer is properly calibrated by playing arround</p>
@@ -207,7 +215,7 @@
       mySocket.send("GOTO:"+target);
     };
 
-    function setPosition() {
+    function setPolaris() {
       mySocket.send("SETP:POLARIS");
     };
 
@@ -225,7 +233,7 @@
 	  } else {
 	  	return;
 	  }
-	  mySocket.send("GPS_:"+infopos);
+	  mySocket.send("GPS:"+infopos);
 	};
 
 	function localPosition() {
@@ -235,19 +243,22 @@
 	};
 
 	function setLocation(code) {
-	    mySocket.send("LOC_:"+code);
+	    mySocket.send("LOCATION:"+code);
 	};
 	
 	localPosition();
 
+	function laser(onoff){
+		mySocket.send("LASER:"+onoff);
+	}
 	function setLatLon(){
 		var lat = document.getElementById("userLAT").value;
-		var lon = document.getElementById("userLAT").value;
+		var lon = document.getElementById("userLON").value;
 		var infopos = "LAT="+lat +",LON="+lon;
-		mySocket.send("GPS_:"+infopos);
+		mySocket.send("GPS:"+infopos);
 	}
 	function setWIFI(){
-		var wifiString = "SSID="+document.getElementById("wifiSSID").value+" PWD="+document.getElementById("wifiPWD").value;
+		var wifiString = "SSID="+document.getElementById("wifiSSID").value+",PWD="+document.getElementById("wifiPWD").value;
 		mySocket.send("WIFI:"+wifiString);
 	}
 
